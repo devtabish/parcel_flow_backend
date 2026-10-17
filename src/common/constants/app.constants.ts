@@ -1,0 +1,10 @@
+export const LOGIN_OTP_EXPIRY = 5 * 60;
+
+export const QUERY_TIMEOUT = {
+    FIND: 4000,
+    FIND_DOWNLOAD: 5000,
+    AGGREGATE: 5000,
+    AGGREGATE_DOWNLOAD: 10000,
+};
+
+export const BASE_RETRY_DELAY_MS = 5000;

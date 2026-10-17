@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        "useUnknownInCatchVariables": false,
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "declaration": true,
+        "removeComments": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "target": "ES2023",
+        "useDefineForClassFields": false,
+        "sourceMap": true,
+        "types": ["node"],
+        "rootDir": "./src",
+        "outDir": "./dist",
+        "baseUrl": "./",
+        "ignoreDeprecations": "6.0",
+        // "incremental": true,
+        "skipLibCheck": true,
+        "strictNullChecks": false,
+        "noImplicitAny": false,
+        "strictBindCallApply": false,
+        "forceConsistentCasingInFileNames": false,
+        "noFallthroughCasesInSwitch": false
+    },
+    "include": ["src/**/*"]
+}
