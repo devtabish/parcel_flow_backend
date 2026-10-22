@@ -50,7 +50,7 @@ async function bootstrap(): Promise<void> {
     app.enableShutdownHooks();
     if (configService.getOrThrow<string>('SWAGGER_ENABLED') === 'true') setupSwagger(app, configService);
     await app.listen(port, '0.0.0.0');
-    console.log(`Groot is running on port ${port}`);
+    console.log(`ParcelFlow is running on port ${port}`);
 }
 
 void bootstrap();

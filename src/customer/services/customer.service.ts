@@ -1,10 +1,10 @@
 import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { IApiResponse } from 'src/common/interfaces/response.interface';
-import { UpdateUserProfileDto } from '../dto/update-user-profile.dto';
-import { IUpdateUser } from '../interfaces/update-user.interface';
-import { UserRepository } from '../repositories/user.repository';
+import { UpdateUserProfileDto } from '../dto/update-customer-profile.dto';
+import { IUpdateCustomer } from '../interfaces/update-customer.interface';
+import { UserRepository } from '../repositories/customer.repository';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
-import { CustomerDocument } from '../schemas/user.schema';
+import { CustomerDocument } from '../schemas/customer.schema';
 
 @Injectable()
 export class UserService {
@@ -43,7 +43,7 @@ export class UserService {
         };
     }
 
-    async upsertUser(params: IUpdateUser): Promise<CustomerDocument> {
+    async upsertUser(params: IUpdateCustomer): Promise<CustomerDocument> {
         const result = await this.repository.findOneAndUpdate(
             {
                 email: params.email,

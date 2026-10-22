@@ -7,11 +7,15 @@ import { IJwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 import { IApiResponse } from 'src/common/interfaces/response.interface';
 import { RedisAuthService } from 'src/common/modules/redis-auth/redis-auth.service';
 import { AdminRepositoryService } from 'src/admin/services/admin-repository.service';
-import { UserRepositoryService } from 'src/user/services/user-repository.service';
-import { RegisterUserDto } from '../dto/register-user.dto';
 import { AdminSignupDto } from 'src/admin/dto/admin-signup.dto';
 import { AdminLoginDto } from 'src/admin/dto/admin-login.dto';
-import { LoginCustomerDto } from '../dto/login-user.dto';
+import { LoginCustomerDto } from '../dto/login-customer.dto';
+import { CustomerRepositoryService } from 'src/customer/services/customer-repository.service';
+import { RegisterCustomerDto } from '../dto/register-customer.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { User, UserDocument } from 'src/user/schemas/user.schema';
+import { Model } from 'mongoose';
+import { LoginRiderDto } from '../dto/login-rider.dto';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +24,9 @@ export class AuthService {
         private readonly jwtService: JwtService,
         private readonly adminService: AdminService,
         private readonly adminRepositoryService: AdminRepositoryService,
-        private readonly userRepositoryService: UserRepositoryService,
+        private readonly userRepositoryService: CustomerRepositoryService,
+        @InjectModel(User.name)
+        private readonly userModel: Model<UserDocument>,
     ) {}
 
     async registerSuperAdmin(payload: AdminSignupDto): Promise<IApiResponse> {
@@ -80,13 +86,11 @@ export class AuthService {
         return { message: 'Logged Out Successfully' };
     }
 
-    async registerCustomer(payload: RegisterUserDto): Promise<IApiResponse> {
+    async registerCustomer(payload: RegisterCustomerDto): Promise<IApiResponse> {
         const { email, password, userName } = payload;
-
         const findUser = await this.userRepositoryService.findOne({ email });
-        if (findUser) throw new BadRequestException('user already registered, go for login');
-
-        const user = await this.userRepositoryService.create({ email, password, userName });
+        if (findUser) throw new BadRequestException('customer already registered, go for login');
+        const user = await this.userRepositoryService.create({ email, password, userName, userType: ERoles.CUSTOMER });
         const userData = user.toObject ? user.toObject() : { ...user };
         delete userData.password;
         return {
@@ -100,7 +104,7 @@ export class AuthService {
             const { email, password } = payload;
             const user = await this.userRepositoryService.findOne({ email }, '+password', { lean: true });
             if (!user) throw new NotFoundException('user not found, register first');
-
+            if (user.userType !== ERoles.CUSTOMER) throw new UnauthorizedException('Invalid credentials');
             if (password !== user.password) throw new UnauthorizedException('Invalid credentials');
 
             const jwtPayload: IJwtPayload = {
@@ -112,6 +116,38 @@ export class AuthService {
                 _id: user._id.toString(),
                 email: user.email,
                 userType: ERoles.CUSTOMER,
+                token,
+            });
+            const userData = user.toObject ? user.toObject() : { ...user };
+            delete userData.password;
+            return {
+                message: 'logged in successfully',
+                data: { token, ...userData },
+            };
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+
+    async loginRider(payload: LoginRiderDto): Promise<IApiResponse> {
+        try {
+            const { email, password } = payload;
+            const user = await this.userModel.findOne({ email }, '+password', { lean: true });
+            console.log(user, 'userrrrrrrrr');
+            if (!user) throw new NotFoundException('user not found, register first');
+            if (user.userType !== ERoles.RIDER) throw new UnauthorizedException('Invalid credentials');
+            if (password !== user.password) throw new UnauthorizedException('Invalid credentials');
+
+            const jwtPayload: IJwtPayload = {
+                sub: user._id.toString(),
+                type: 'user',
+            };
+            const token = await this.jwtService.signAsync(jwtPayload);
+            await this.redisAuthService.setUserAuth(user._id.toString(), {
+                _id: user._id.toString(),
+                email: user.email,
+                userType: ERoles.RIDER,
                 token,
             });
             const userData = user.toObject ? user.toObject() : { ...user };
