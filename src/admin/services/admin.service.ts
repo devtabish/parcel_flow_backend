@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { IApiResponse } from 'src/common/interfaces/response.interface';
 import { ERoles } from 'src/common/enums/roles.enum';
@@ -7,11 +7,18 @@ import { AdminDocument } from '../schemas/admin.schema';
 import { UpdateAdminProfileDto } from '../dto/update-admin-profile.dto';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { GetAdminProfileDto } from '../dto/get-admin-profile.dto';
-import { Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
+import { CreateRiderDto } from '../dto/create-rider.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { User, UserDocument } from 'src/user/schemas/user.schema';
 
 @Injectable()
 export class AdminService {
-    constructor(private readonly repository: AdminRepository) {}
+    constructor(
+        private readonly repository: AdminRepository,
+        @InjectModel(User.name)
+        private readonly userModel: Model<UserDocument>,
+    ) {}
 
     async createAdministrator(email: string, password: string): Promise<AdminDocument | null> {
         try {
@@ -27,6 +34,26 @@ export class AdminService {
         } catch (error) {
             throw error;
         }
+    }
+
+    async createRider(payload: CreateRiderDto): Promise<IApiResponse> {
+        const { email, password, userName } = payload;
+        const normalizedEmail = email.trim().toLowerCase();
+        const existingUser = await this.userModel.findOne({ email: normalizedEmail }).exec();
+        if (existingUser) throw new ConflictException('Email already registered');
+        const rider = await this.userModel.create({
+            email: normalizedEmail,
+            userName: userName.trim(),
+            password,
+            userType: ERoles.RIDER,
+        });
+        const riderData = rider.toObject();
+        delete riderData.password;
+
+        return {
+            message: 'Rider created successfully',
+            data: riderData,
+        };
     }
 
     async getProfile(payload: GetAdminProfileDto): Promise<IApiResponse> {

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from '../repositories/user.repository';
+import { UserRepository } from '../repositories/customer.repository';
 import { FilterQuery, HydratedDocument, PipelineStage, ProjectionType, QueryOptions } from 'mongoose';
-import { CustomerDocument } from '../schemas/user.schema';
+import { CustomerDocument } from '../schemas/customer.schema';
 
 @Injectable()
-export class UserRepositoryService {
+export class CustomerRepositoryService {
     constructor(private readonly repository: UserRepository) {}
 
     async findOne(

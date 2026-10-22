@@ -1,6 +1,6 @@
 import { ELoginProvider } from 'src/common/enums/login-provider.enum';
 
-export interface IUpdateUser {
+export interface IUpdateCustomer {
     email?: string;
     displayName?: string;
     avatarUrl?: string;

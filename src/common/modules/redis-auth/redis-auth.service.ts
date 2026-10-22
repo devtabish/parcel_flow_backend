@@ -1,11 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { RedisCacheService } from 'src/common/modules/redis-cache/redis-cache.service';
-import { CustomerDocument } from 'src/user/schemas/user.schema';
 import { JwtService } from '@nestjs/jwt';
 import { ISetAdminAuth, ISetUserAuth } from './interface/set-auth.interface';
 import { AdminDocument } from 'src/admin/schemas/admin.schema';
 import { IJwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 import { IUpdateAuth } from './interface/update-Auth.interface';
+import { CustomerDocument } from 'src/customer/schemas/customer.schema';
 
 @Injectable()
 export class RedisAuthService {

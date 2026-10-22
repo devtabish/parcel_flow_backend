@@ -4,8 +4,8 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { ReqProfile } from 'src/common/decorators/req-profile.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { ERoles } from 'src/common/enums/roles.enum';
-import { UpdateUserProfileDto } from '../dto/update-User-profile.dto';
-import { UserService } from '../services/user.service';
+import { UpdateUserProfileDto } from '../dto/update-customer-profile.dto';
+import { UserService } from '../services/customer.service';
 import { StrictValidation } from 'src/common/decorators/strict-validation.decorator';
 import { IApiResponse } from 'src/common/interfaces/response.interface';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
@@ -13,7 +13,7 @@ import { UpdatePasswordDto } from '../dto/update-password.dto';
 @StrictValidation()
 @Controller('CUSTOMER')
 @UseGuards(CustomerAuthGuard, RolesGuard)
-export class UserController {
+export class CustomerController {
     constructor(private readonly CUSTOMERService: UserService) {}
 
     @Get('profile')

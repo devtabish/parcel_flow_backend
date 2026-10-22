@@ -6,7 +6,7 @@ import { AppService } from './app.service';
 import { RouteDuplicateDetector } from './common/services/route-duplicate-detector.service';
 import { DiscoveryModule } from '@nestjs/core';
 import { CoreModule } from './core/core.module';
-import { UserModule } from './user/user.module';
+import { CustomerModule } from './customer/customer.module';
 import { AdminModule } from './admin/admin.module';
 import { CronModule } from './cron/cron.module';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
@@ -20,7 +20,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ParcelManagementModule } from './parcel-management/parcel-management.module';
-import { ParcelManagementModule } from './parcel-management/parcel-management.module';
+import { UserModule } from './user/user.module';
 
 @Module({
     imports: [
@@ -48,7 +48,7 @@ import { ParcelManagementModule } from './parcel-management/parcel-management.mo
         AdminModule,
         CoreModule,
         // TempBlockIpModule,
-        UserModule,
+        CustomerModule,
         UploadModule,
         CronModule,
         TaskTrackerModule,
@@ -56,6 +56,7 @@ import { ParcelManagementModule } from './parcel-management/parcel-management.mo
         ContactModule,
         CloudinaryModule,
         ParcelManagementModule,
+        UserModule,
     ],
     controllers: [AppController],
     providers: [
